@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingsService } from '../services/settings.service';
 
-declare function customInitFunctions(): void; // le indicamos que confie en nosotros que tenemos una const global  
+ declare function customInitFunctions(): void ; // le indicamos que confie en nosotros que tenemos una const global  
 
 @Component({
   selector: 'app-pages',
@@ -15,6 +15,7 @@ export class PagesComponent implements OnInit {
   constructor( private setingsService: SettingsService) { }
 
   ngOnInit(): void {
+    customInitFunctions();
     customInitFunctions();
   }
 
