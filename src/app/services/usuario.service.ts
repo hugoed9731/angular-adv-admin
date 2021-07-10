@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form-interface';
+import { Usuario } from '../models/usuario.model';
 
 
 // tap - es un operador que lanza un efecto secundario- adiciona un paso
@@ -23,12 +24,24 @@ export class UsuarioService {
 
   // declaracion de google
   public auth2: any;
+  // --------------
+  // --------------
+  public usuario!: Usuario;
 // Ngzone - te permite trabajar con librerias de 3ros, en este caso angular
   constructor( private http: HttpClient, 
     private router: Router, private ngZone:NgZone) {
                   this.googleInit();
                   // esto solo se va a ejecutar una unica vez cada que la app se recarge
                 }
+  
+  get token(): string {
+    return localStorage.getItem('token') || '';
+  }
+
+
+  get uid():string {
+    return this.usuario.uid || '';
+  }
 
   
   googleInit(){
@@ -67,20 +80,23 @@ export class UsuarioService {
   // Renew Token
   // VALIDAR TOKEN - DEVUELVE UN BOOLEAN
   validarToken(): Observable<boolean>{
-    const token = localStorage.getItem('token') || '';
 
     // peticion al backend
       return this.http.get(`${base_url}/login/renew`, {
       headers: {
-        'x-token': token
+        'x-token': this.token
       }
     }).pipe(
-      tap( (resp: any) => {
+      map( (resp: any) => {
+         // map tranforma la resp en boolean
         // ya tenemos una version del token
+        // imagen vacia para evitar problemas con includes que lee la img undefined
+        const { email, google, nombre, role, img = '', uid } = resp.usuario;
+        // instanciamos el objeto
+        this.usuario = new Usuario(nombre, email, '', img, google, role, uid);
         localStorage.setItem('token', resp.token);
+        return true;
       }),
-      // map tranforma la resp en boolean
-      map( resp => true),
       // si devuelve un error vamos a manejarlo
       // of - retorna un nuevo observable
       catchError(error => of(false) )
@@ -103,6 +119,22 @@ export class UsuarioService {
     // regresamos todo el observable con return para subscribirnos en register.component.ts
   }
 
+
+
+  actualizarPerfil(data: { email: string, nombre:  string, role: string | undefined}){
+
+    data = {
+      // todo lo que tenga la data =  ...data
+      ...data, 
+      role: this.usuario.role
+    };
+
+    return this.http.put(`${base_url}/usuarios/${this.uid}`, data,  {
+      headers: {
+        'x-token': this.token
+      }
+    });
+  }
 
 
   
