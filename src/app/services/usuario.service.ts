@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form-interface';
 import { Usuario } from '../models/usuario.model';
+import { CargarUsuario } from '../interfaces/cargar-usuarios.interface';
 
 
 // tap - es un operador que lanza un efecto secundario- adiciona un paso
@@ -41,6 +42,14 @@ export class UsuarioService {
 
   get uid():string {
     return this.usuario.uid || '';
+  }
+
+  get headers() {
+    return {
+      headers: {
+        'x-token': this.token
+      }
+    }
   }
 
   
@@ -123,17 +132,13 @@ export class UsuarioService {
 
   actualizarPerfil(data: { email: string, nombre:  string, role: string | undefined}){
 
+     // todo lo que tenga la data =  ...data
     data = {
-      // todo lo que tenga la data =  ...data
       ...data, 
       role: this.usuario.role
     };
 
-    return this.http.put(`${base_url}/usuarios/${this.uid}`, data,  {
-      headers: {
-        'x-token': this.token
-      }
-    });
+    return this.http.put(`${base_url}/usuarios/${this.uid}`, data, this.headers);
   }
 
 
@@ -167,5 +172,36 @@ export class UsuarioService {
 
 }
 
+
+cargarUsuarios(desde: number = 0) {
+  
+  const url = `${base_url}/usuarios?desde=${desde}`;
+  return this.http.get<CargarUsuario>(url, this.headers)
+      .pipe(
+        // delay(3000),  hacemo la carga de datos de usuario un poco mas lenta
+        map( resp => {
+          console.log(resp);
+          // cambiar arreglo de objetos por uno de tipo usuarios
+          const usuarios = resp.usuarios.map(
+                user => new Usuario(user.nombre, user.email, '', user.img, user.google, user.role, user.uid) )
+          return {
+            total: resp.total,
+            usuarios
+          };
+        })
+      )
+}
+
+    eliminarUsuario(usuario: Usuario) {
+        // hacer la peticion al backen para eliminar el usuario 'endpoint'
+        const url = `${base_url}/usuarios/${usuario.uid}`;
+        return this.http.delete(url, this.headers);
+        
+    }
+
+
+    guardarUsuario(usuario:Usuario){
+     return this.http.put(`${base_url}/usuarios/${usuario.uid}`, usuario, this.headers);
+   }
 // este servicio realiza peticiones HTTP
 }

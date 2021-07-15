@@ -15,13 +15,15 @@ export class Usuario {
     ){}
 
     get imagenUrl() {
-        /* includes() El método includes() determina si una cadena de 
-        texto puede ser encontrada dentro de otra cadena de texto, devolviendo true o false según corresponda. this.img && this.img.includes('https')*/
-        if (this.img?.includes('https') ) {
+
+        if(!this.img){
+            return `${ base_url }/upload/usuarios/no-image`;
+        } else if (this.img?.includes('https') ) {
             return this.img;
-        }
-        
-        if ( this.img ) {
+             /* includes() El método includes() determina si una cadena de 
+        texto puede ser encontrada dentro de otra cadena de texto, devolviendo true o false según corresponda. 
+        this.img && this.img.includes('https')*/
+        } else if ( this.img ) {
             return `${ base_url }/upload/usuarios/${ this.img }`;
         } else {
             return `${ base_url }/upload/usuarios/no-image`;

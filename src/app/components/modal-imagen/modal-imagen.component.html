@@ -1,0 +1,31 @@
+<div class="fondo-modal-imagen animated fadeIn fast" [class.oculto]=" modalImagenService.ocultarModal" style="background-color: rgba(0, 0, 0, 0.4);">
+
+    <div id="responsive-modal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: block; padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cargar imagen</h4>
+                    <button type="button" class="close" data-dismiss="modal" (click)="cerrarModal()" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h3>Seleccione una imagen</h3>
+
+                    <div class="text-center">
+                        <!-- si no existe la imagen temporal muestra esta -->
+                        <img *ngIf="!imgTemp" [src]="modalImagenService.img" class="img-avatar">
+                        <!-- y si no muestra la otra -->
+                        <img *ngIf="imgTemp" [src]="imgTemp" class="img-avatar">
+                    </div>
+
+
+                    <input (change)="cambiarImagen($event)" type="file">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal" (click)="cerrarModal()">Cancelar</button>
+                    <button type="button" class="btn btn-danger waves-effect waves-light" (click)="subirImagen()">Actualizar foto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
