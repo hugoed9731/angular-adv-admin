@@ -37,6 +37,12 @@
     text-align: center;
 }
 
+.w200 {
+    width: 200px;
+    align-items: center;
+    text-align: center;
+}
+
 .avatar {
     /* border: 1px solid grey; */
     border-radius: 100%;

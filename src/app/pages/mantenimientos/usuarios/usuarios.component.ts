@@ -38,7 +38,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
    this.cargarUsuarios();
 
-  //  nos subscribimos al nuevaImagen: EventEmitter
+  //  nos subscribimos al nuevaImagen: EventEmitter para recargar la pagina automaticamente
   this.imgSubs = this.modalImagenService.nuevaImagen.pipe(
     delay(100)
   ).subscribe( img => {this.cargarUsuarios()});
@@ -84,7 +84,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
     this.busquedasService.buscar( 'usuarios', termino )
         .subscribe( resp => {
 
-          this.usuarios = resp;
+          this.usuarios = resp as Usuario[]; // casteo de informacion
 
         });
   }
