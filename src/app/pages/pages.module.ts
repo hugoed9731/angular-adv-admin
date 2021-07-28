@@ -22,6 +22,7 @@ import { UsuariosComponent } from './mantenimientos/usuarios/usuarios.component'
 import { HospitalesComponent } from './mantenimientos/hospitales/hospitales.component';
 import { MedicosComponent } from './mantenimientos/medicos/medicos.component';
 import { MedicoComponent } from './mantenimientos/medicos/medico.component';
+import { BusquedasComponent } from './busquedas/busquedas.component';
 
 
 
@@ -39,7 +40,8 @@ import { MedicoComponent } from './mantenimientos/medicos/medico.component';
     UsuariosComponent,
     HospitalesComponent,
     MedicosComponent,
-    MedicoComponent
+    MedicoComponent,
+    BusquedasComponent
     // le dice a Angular qué componentes pertenecen a ese módulo. A medida que crees más componentes, agrégalos a las declarations 
   ],
   exports: [

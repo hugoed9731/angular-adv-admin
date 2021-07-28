@@ -7,8 +7,10 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form-interface';
-import { Usuario } from '../models/usuario.model';
 import { CargarUsuario } from '../interfaces/cargar-usuarios.interface';
+
+import { Usuario } from '../models/usuario.model';
+
 
 
 // tap - es un operador que lanza un efecto secundario- adiciona un paso
@@ -39,6 +41,10 @@ export class UsuarioService {
     return localStorage.getItem('token') || '';
   }
 
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE' | undefined {
+    return this.usuario.role;
+  }
+  
 
   get uid():string {
     return this.usuario.uid || '';
@@ -52,7 +58,6 @@ export class UsuarioService {
     }
   }
 
-  
   googleInit(){
 
     return new Promise( resolve => {
@@ -71,9 +76,21 @@ export class UsuarioService {
   }
 
 
+  guardarLocalStorage(token: string, menu: any) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('menu', JSON.stringify(menu));
+        /* hay que pasar por esta peticion ya que es un arreglo
+         pero lo leeremos como JSON COMO SI FUERA string 
+         convierte un objeto o valor de JavaScript en una cadena de texto JSON*/
+  }
+
+  
+
+
   logout () {
     localStorage.removeItem('token');
-
+    // TODO: Borrar menu
+    localStorage.removeItem('menu');
     // sigout esto viene de google
     this.auth2.signOut().then( () => {
       this.ngZone.run(() => {
@@ -103,7 +120,7 @@ export class UsuarioService {
         const { email, google, nombre, role, img = '', uid } = resp.usuario;
         // instanciamos el objeto
         this.usuario = new Usuario(nombre, email, '', img, google, role, uid);
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
         return true;
       }),
       // si devuelve un error vamos a manejarlo
@@ -119,7 +136,8 @@ export class UsuarioService {
     return this.http.post(`${base_url}/usuarios`, formData)
             .pipe(
               tap(( resp: any) => {
-                localStorage.setItem('token', resp.token)
+                this.guardarLocalStorage(resp.token, resp.menu);
+
               })
             );
     
@@ -148,7 +166,7 @@ export class UsuarioService {
     return this.http.post(`${base_url}/login`, formData)
               .pipe(
                 tap(( resp: any) => {
-                  localStorage.setItem('token', resp.token)
+                 this.guardarLocalStorage(resp.token, resp.menu);
                 })
               );
     // tap recibe lo que responda esa peticion
@@ -165,7 +183,7 @@ export class UsuarioService {
     return this.http.post(`${base_url}/login/google`, {token})
               .pipe(
                 tap(( resp: any) => {
-                  localStorage.setItem('token', resp.token)
+                  this.guardarLocalStorage(resp.token, resp.menu);
                 })
               );
 
